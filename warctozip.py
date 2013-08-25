@@ -10,12 +10,14 @@ import os.path
 from optparse import OptionParser
 from contextlib import closing
 
+import zipfile
 from zipfile import ZipFile
 import re
 
 from hanzo.warctools import ArchiveRecord, WarcRecord
 from hanzo.httptools import RequestMessage, ResponseMessage
 
+# 2FIX: optparse is deprecated, replace with argparse http://docs.python.org/2/library/optparse.html
 parser = OptionParser(usage="%prog [options] warc zip")
 
 #parser.add_option("-l", "--limit", dest="limit")
@@ -37,7 +39,7 @@ def main(argv):
         filename = args[0]
         zipfilename = args[1]
 
-        with ZipFile(zipfilename, "w") as outzip:
+        with ZipFile(zipfilename, "w", zipfile.ZIP_DEFLATED) as outzip:
             with closing(ArchiveRecord.open_archive(filename=filename, gzip="auto")) as fh:
                 dump_record(fh, outzip)
 
